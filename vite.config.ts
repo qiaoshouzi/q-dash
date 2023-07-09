@@ -17,16 +17,16 @@ export default defineConfig(({ command }) => {
         },
       },
     },
-    server:
-      command === "serve"
-        ? {
-            host: "0.0.0.0",
-            https: {
+    server: {
+      host: "0.0.0.0",
+      https:
+        command === "serve"
+          ? {
               key: fs.readFileSync(path.join(__dirname, "./dev-https/https.key")),
               cert: fs.readFileSync(path.join(__dirname, "./dev-https/https.cer")),
-            },
-          }
-        : undefined,
+            }
+          : undefined,
+    },
     envPrefix: ["VITE_", "CF_", "Q_"],
     plugins: [vue()],
     resolve: {

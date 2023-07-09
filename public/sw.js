@@ -2,7 +2,6 @@
 console.log("Successful registered service worker.");
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js");
 
-workbox.routing.registerRoute(/https:\/\/dash\.cfm\.moe\//, new workbox.strategies.NetworkOnly());
 workbox.routing.registerRoute(
   /^https:\/\/.+\.cfm\.moe\/assets\/.+\.(js|css)$/,
   new workbox.strategies.CacheFirst()
@@ -36,5 +35,3 @@ workbox.routing.registerRoute(
   /^https:\/\/api-dash\.cfm\.moe\/api\/.+$/,
   new workbox.strategies.NetworkOnly()
 );
-
-workbox.routing.setDefaultHandler(new workbox.strategies.NetworkOnly());

@@ -30,8 +30,3 @@ workbox.routing.registerRoute(
     networkTimeoutSeconds: 3,
   })
 );
-// 其他API NetworkOnly
-workbox.routing.registerRoute(
-  /^https:\/\/api-dash\.cfm\.moe\/api\/.+$/,
-  new workbox.strategies.NetworkOnly()
-);

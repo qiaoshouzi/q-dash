@@ -3,6 +3,11 @@ console.log("Successful registered service worker.");
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js");
 
 workbox.routing.registerRoute(
+  /^https:\/\/.+\.cloudflareaccess\.com\/.+$/,
+  new workbox.strategies.NetworkOnly()
+);
+
+workbox.routing.registerRoute(
   /^https:\/\/.+\.cfm\.moe\/assets\/.+\.(js|css)$/,
   new workbox.strategies.CacheFirst()
 );

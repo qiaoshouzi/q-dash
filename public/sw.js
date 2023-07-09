@@ -8,7 +8,7 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-  /^https:\/\/.+\.cfm\.moe\/assets\/.+\.(js|css)$/,
+  /^https:\/\/dash\.cfm\.moe\/assets\/.+\.(js|css)$/,
   new workbox.strategies.CacheFirst()
 );
 

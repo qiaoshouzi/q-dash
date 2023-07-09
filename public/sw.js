@@ -36,8 +36,4 @@ workbox.routing.registerRoute(
   new workbox.strategies.NetworkOnly()
 );
 
-workbox.routing.setDefaultHandler(
-  new workbox.strategies.NetworkFirst({
-    networkTimeoutSeconds: 3,
-  })
-);
+workbox.routing.setDefaultHandler(new workbox.strategies.NetworkOnly());

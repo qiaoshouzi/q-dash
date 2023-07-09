@@ -14,23 +14,18 @@
       <span class="bili-dyn-card-video__title bili-ellipsis">{{ animeData.title }}</span>
       <div style="display: flex; align-items: flex-end; justify-content: space-between">
         <div>
-          <n-tag v-if="animeData.type === 'follow'" :bordered="false" type="success" size="small">
-            追番
+          <n-tag :bordered="false" :type="typeData[animeData.type].tagType" size="small">
+            {{ typeData[animeData.type].text }}
           </n-tag>
-          <n-tag
-            v-else-if="animeData.type === 'repair'"
-            :bordered="false"
-            type="warning"
-            size="small"
+          <div v-if="animeData.startTime !== null" class="bili-dyn-card-video__desc">
+            {{ animeData.startTime }} 开始放送
+          </div>
+          <div
+            v-if="animeData.updateTime !== null || animeData.ep !== null"
+            class="bili-dyn-card-video__desc"
           >
-            补番
-          </n-tag>
-          <n-tag v-else-if="animeData.type === 'want'" :bordered="false" type="info" size="small">
-            想看
-          </n-tag>
-          <div class="bili-dyn-card-video__desc">{{ animeData.startTime }} 开始放送</div>
-          <div class="bili-dyn-card-video__desc">
-            每周{{ animeData.updateTime }}更新 | 共{{ animeData.ep }}话
+            <span v-if="animeData.updateTime !== null">每周{{ animeData.updateTime }}更新</span>
+            <span v-if="animeData.ep !== null"> | 共{{ animeData.ep }}话</span>
           </div>
         </div>
         <div style="display: flex; gap: 5px">
@@ -64,7 +59,27 @@ const emit = defineEmits(["editButtonClick"]);
 const counter = useCounterStore();
 
 const animeData = ref<AnimeData>(props.data);
-watch(props.data, (value) => (animeData.value = value));
+watch(props, (value) => (animeData.value = value.data));
+
+const typeData: {
+  [key: string]: {
+    text: string;
+    tagType: "info" | "success" | "warning";
+  };
+} = {
+  follow: {
+    text: "追番",
+    tagType: "success",
+  },
+  repair: {
+    text: "补番",
+    tagType: "warning",
+  },
+  want: {
+    text: "想看",
+    tagType: "info",
+  },
+};
 </script>
 
 <style scoped>

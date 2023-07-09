@@ -5,5 +5,5 @@ export type AnimeData = {
   type: "follow" | "repair" | "want"; // 追番 补番 想看
   startTime: string | null; // 2023.01.01
   updateTime: string | null; // 五
-  ep: number; // 总集数
+  ep: number | null; // 总集数
 };

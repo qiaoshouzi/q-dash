@@ -20,6 +20,29 @@
         </n-button>
       </div>
     </template>
+    <n-collapse-transition :show="radioButtonValue === 'follow'">
+      <n-scrollbar x-scrollable trigger="none">
+        <n-timeline
+          horizontal
+          style="white-space: nowrap; margin-bottom: 10px; justify-content: center"
+        >
+          <n-timeline-item
+            v-for="(value, key) in daysOfWeek"
+            :key="key"
+            :type="value === today ? 'success' : value === selectDay ? 'warning' : 'default'"
+          >
+            <n-button
+              quaternary
+              size="tiny"
+              :type="value === today ? 'success' : value === selectDay ? 'warning' : 'default'"
+              @click="selectDay = value"
+            >
+              星期{{ value }}
+            </n-button>
+          </n-timeline-item>
+        </n-timeline>
+      </n-scrollbar>
+    </n-collapse-transition>
     <!-- AnimeCard -->
     <n-scrollbar
       v-if="animeDataType.length > 0"
@@ -65,7 +88,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { NCard, NButton, NEmpty, NScrollbar } from "naive-ui";
+import {
+  NCard,
+  NEmpty,
+  NButton,
+  NTimeline,
+  NScrollbar,
+  NTimelineItem,
+  NCollapseTransition,
+} from "naive-ui";
 
 import { useCounterStore } from "@/stores/counter";
 
@@ -77,6 +108,11 @@ import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
 const counter = useCounterStore();
 
+// Timeline
+const today = new Date().toLocaleString("zh-CN", { weekday: "short" }).replace("周", "");
+const selectDay = ref<string | undefined>(today);
+const daysOfWeek = ["一", "二", "三", "四", "五", "六", "日"];
+
 const animeData = ref<AnimeData[]>([]);
 const animeDataType = computed(() => {
   return animeData.value
@@ -86,7 +122,12 @@ const animeDataType = computed(() => {
         ...value,
       };
     })
-    .filter((value) => radioButtonValue.value === "all" || value.type === radioButtonValue.value);
+    .filter((value) => radioButtonValue.value === "all" || value.type === radioButtonValue.value)
+    .sort((a, b) => {
+      if (a.updateTime === selectDay.value || b.updateTime === null) return -1;
+      else if (b.updateTime === selectDay.value || a.updateTime === null) return 1;
+      else return daysOfWeek.indexOf(a.updateTime) - daysOfWeek.indexOf(b.updateTime);
+    });
 });
 
 // RadioButton

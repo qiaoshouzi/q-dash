@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { fileURLToPath, URL } from "node:url";
 
 import { defineConfig } from "vite";
@@ -16,6 +18,10 @@ export default defineConfig({
   },
   server: {
     host: "0.0.0.0",
+    https: {
+      key: fs.readFileSync(path.join(__dirname, "./dev-https/https.key")),
+      cert: fs.readFileSync(path.join(__dirname, "./dev-https/https.cer")),
+    },
   },
   envPrefix: ["VITE_", "CF_", "Q_"],
   plugins: [vue()],

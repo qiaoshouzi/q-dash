@@ -9,6 +9,13 @@
   <meta name="referrer" content="no-referrer">
   <link rel="icon" href="/favicon.ico">
   <title>Qiao's Dash</title>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.unregister();
+      });
+    }
+  </script>
 </head>
 
 <body>

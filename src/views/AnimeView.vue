@@ -54,6 +54,7 @@
           :key="JSON.stringify(value)"
           :width="animeCardWidth"
           :data="value"
+          :select-day="selectDay"
           @edit-button-click="
             () => {
               animeEditIsEdit = true;
@@ -87,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import {
   NCard,
   NEmpty,
@@ -124,9 +125,9 @@ const animeDataType = computed(() => {
     })
     .filter((value) => radioButtonValue.value === "all" || value.type === radioButtonValue.value)
     .sort((a, b) => {
-      if (a.updateTime === selectDay.value || b.updateTime === null) return -1;
-      else if (b.updateTime === selectDay.value || a.updateTime === null) return 1;
-      else return daysOfWeek.indexOf(a.updateTime) - daysOfWeek.indexOf(b.updateTime);
+      if (a.updateTime.week === selectDay.value || b.updateTime.week === null) return -1;
+      else if (b.updateTime.week === selectDay.value || a.updateTime.week === null) return 1;
+      else return daysOfWeek.indexOf(a.updateTime.week) - daysOfWeek.indexOf(b.updateTime.week);
     });
 });
 
@@ -150,6 +151,7 @@ const radioButtonOptions = [
   },
 ];
 const radioButtonValue = ref<string>("all");
+watch(radioButtonValue, () => (selectDay.value = today));
 
 // Anime Edit Data
 const animeEditIsEdit = ref<boolean>(false);

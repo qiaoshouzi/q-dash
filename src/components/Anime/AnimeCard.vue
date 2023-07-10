@@ -24,8 +24,37 @@
             v-if="animeData.updateTime !== null || animeData.ep !== null"
             class="bili-dyn-card-video__desc"
           >
-            <span v-if="animeData.updateTime !== null">每周{{ animeData.updateTime }}更新</span>
-            <span v-if="animeData.ep !== null"> | 共{{ animeData.ep }}话</span>
+            <n-text
+              v-if="animeData.updateTime.week !== null || animeData.updateTime.time !== null"
+              :type="
+                animeData.updateTime.week === today
+                  ? 'success'
+                  : animeData.updateTime.week === props.selectDay
+                  ? 'warning'
+                  : 'default'
+              "
+            >
+              <span v-if="animeData.updateTime.week !== null">
+                每周{{ animeData.updateTime.week }}
+              </span>
+              <span
+                v-if="animeData.updateTime.week !== null && animeData.updateTime.time !== null"
+                style="margin: 0 2px"
+              ></span>
+              <span v-if="animeData.updateTime.time !== null">
+                {{ animeData.updateTime.time }}
+              </span>
+              <span>更新</span>
+            </n-text>
+            <span
+              v-if="
+                (animeData.updateTime.week !== null || animeData.updateTime.time !== null) &&
+                animeData.ep !== null
+              "
+            >
+              |
+            </span>
+            <span v-if="animeData.ep !== null">共{{ animeData.ep }}话</span>
           </div>
         </div>
         <div style="display: flex; gap: 5px">
@@ -38,7 +67,7 @@
 
 <script setup lang="ts">
 import { ref, watch, type PropType } from "vue";
-import { NTag, NButton, NImage } from "naive-ui";
+import { NTag, NButton, NImage, NText } from "naive-ui";
 
 import { useCounterStore } from "@/stores/counter";
 
@@ -54,9 +83,14 @@ const props = defineProps({
     type: Object as PropType<AnimeData>,
     required: true,
   },
+  selectDay: {
+    type: String,
+  },
 });
 const emit = defineEmits(["editButtonClick"]);
 const counter = useCounterStore();
+
+const today = new Date().toLocaleString("zh-CN", { weekday: "short" }).replace("周", "");
 
 const animeData = ref<AnimeData>(props.data);
 watch(props, (value) => (animeData.value = value.data));

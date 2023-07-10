@@ -34,14 +34,32 @@
           />
         </n-form-item>
       </div>
-      <div style="display: flex; gap: 5px">
-        <n-form-item label="更新时间" style="flex: 1">
-          <n-select v-model:value="animeData.updateTime" clearable :options="updateTimeOptions" />
-        </n-form-item>
-        <n-form-item label="总话数" style="flex: 1">
-          <n-input-number v-model:value="animeData.ep" clearable style="width: 100%" />
-        </n-form-item>
-      </div>
+      <n-grid :cols="counter.pageSize === 'pc' ? 2 : 1" x-gap="5px">
+        <n-gi>
+          <n-form-item label="更新时间" style="flex: 1">
+            <div style="width: 100%; display: flex; gap: 5px">
+              <n-select
+                v-model:value="animeData.updateTime.week"
+                clearable
+                :options="updateTimeOptions"
+                style="flex: 1"
+              />
+              <n-time-picker
+                v-model:formatted-value="animeData.updateTime.time"
+                value-format="HH:mm"
+                format="HH:mm"
+                clearable
+                style="flex: 1"
+              />
+            </div>
+          </n-form-item>
+        </n-gi>
+        <n-gi>
+          <n-form-item label="总话数" style="flex: 1">
+            <n-input-number v-model:value="animeData.ep" clearable style="width: 100%" />
+          </n-form-item>
+        </n-gi>
+      </n-grid>
     </n-form>
     <div style="display: flex; justify-content: flex-end; gap: 5px">
       <n-button
@@ -70,7 +88,9 @@
 <script setup lang="ts">
 import { ref, watch, type PropType } from "vue";
 import {
+  NGi,
   NForm,
+  NGrid,
   NImage,
   NInput,
   NModal,
@@ -79,11 +99,13 @@ import {
   NDivider,
   NFormItem,
   NDatePicker,
+  NTimePicker,
   NInputNumber,
 } from "naive-ui";
 
 import type { AnimeData } from "@/types/anime";
 import { getAssetsUrl } from "@/assets/utils";
+import { useCounterStore } from "@/stores/counter";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
 const props = defineProps({
@@ -100,6 +122,7 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["update:show", "refresh", "delete"]);
+const counter = useCounterStore();
 
 const statusOptions = [
   {
@@ -153,7 +176,10 @@ const animeData = ref<AnimeData>(
     title: "",
     type: "follow",
     startTime: null,
-    updateTime: null,
+    updateTime: {
+      week: null,
+      time: null,
+    },
     ep: 12,
   }
 );
@@ -165,7 +191,10 @@ watch(props, (value) => {
       title: "",
       type: "follow",
       startTime: null,
-      updateTime: null,
+      updateTime: {
+        week: null,
+        time: null,
+      },
       ep: 12,
     };
   else animeData.value = value.data;

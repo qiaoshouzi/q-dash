@@ -1,5 +1,5 @@
 <template>
-  <n-card title="Anime" size="small" id="anime-card">
+  <n-card title="Anime" size="small" id="anime-card" :bordered="counter.pageSize === 'pc'">
     <template #header-extra>
       <div style="display: flex; gap: 5px">
         <RadioButton v-model:value="radioButtonValue" :options="radioButtonOptions" size="small" />

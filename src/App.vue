@@ -1,16 +1,26 @@
 <template>
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme="darkTheme">
     <n-layout position="absolute">
-      <n-layout-header bordered class="navigation">
+      <n-layout-header
+        bordered
+        class="navigation"
+        :style="{ 'justify-content': counter.pageSize === 'pc' ? 'space-between' : 'center' }"
+      >
         <span class="siteName" @click="() => router.push('/')">Qiao's Dash</span>
-        <n-menu mode="horizontal" v-model:value="menuValue" :options="menuOptions" />
+        <n-menu
+          v-if="counter.pageSize === 'pc'"
+          mode="horizontal"
+          v-model:value="menuValue"
+          :options="menuOptions"
+        />
       </n-layout-header>
       <n-layout-content
         :native-scrollbar="false"
-        style="top: 3.6rem; bottom: 0"
+        style="top: 3.6rem"
+        :style="{ bottom: counter.pageSize === 'pc' ? '0' : '3.6rem' }"
         position="absolute"
       >
-        <n-back-top />
+        <n-back-top bottom="65" />
         <div
           class="container"
           :style="{ padding: counter.pageSize === 'pc' ? '20px 16px' : '20px 0 104px 0' }"
@@ -18,6 +28,14 @@
           <router-view />
         </div>
       </n-layout-content>
+      <n-layout-footer
+        v-if="counter.pageSize === 'phone'"
+        position="absolute"
+        bordered
+        class="footer"
+      >
+        <n-menu mode="horizontal" v-model:value="menuValue" :options="menuOptions" />
+      </n-layout-footer>
     </n-layout>
     <n-global-style />
   </n-config-provider>
@@ -26,7 +44,15 @@
 <script setup lang="ts">
 import { h, ref } from "vue";
 import { RouterLink } from "vue-router";
-import { NLayout, NBackTop, NLayoutHeader, NLayoutContent, NMenu, type MenuOption } from "naive-ui";
+import {
+  NMenu,
+  NLayout,
+  NBackTop,
+  NLayoutFooter,
+  NLayoutHeader,
+  NLayoutContent,
+  type MenuOption,
+} from "naive-ui";
 import { zhCN, dateZhCN, darkTheme, NGlobalStyle, NConfigProvider } from "naive-ui"; // NaiveUI Config
 
 import router from "@/router";
@@ -118,18 +144,11 @@ initConfig();
 
 <style>
 .siteName {
-  /* display: flex; */
-  /* flex-grow: 1; */
-  /* align-items: center; */
-
   font-weight: bold;
   font-size: 18px;
   letter-spacing: 2px;
   white-space: nowrap;
   cursor: default;
-
-  /* margin-left: 0; */
-  /* justify-content: flex-start; */
 }
 
 .navigation {
@@ -139,12 +158,19 @@ initConfig();
   text-align: center;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 .container {
   max-width: 1120px;
-  /* padding: 20px 16px 104px 16px; */
   margin: 0 auto;
+}
+
+.footer {
+  height: calc(3.6rem - 1px);
+  user-select: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

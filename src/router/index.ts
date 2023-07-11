@@ -1,6 +1,8 @@
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 import { createRouter, createWebHistory } from "vue-router";
-const HomeView = () => import("@/views/HomeView.vue");
+
+import HomeView from "@/views/HomeView.vue";
+const DynamicView = () => import("@/views/DynamicView.vue");
 const AnimeView = () => import("@/views/AnimeView.vue");
 
 const routes = [
@@ -8,6 +10,11 @@ const routes = [
     path: "/",
     name: "Home",
     component: HomeView,
+  },
+  {
+    path: "/dynamic",
+    name: "Dynamic",
+    component: DynamicView,
   },
   {
     path: "/anime",
@@ -31,11 +38,11 @@ router.beforeEach((to) => {
 
 // 加载进度条
 router.beforeEach((to, from, next) => {
-  NaiveUIDiscreteAPI.loadingBar.start();
+  if (to.name !== "Home") NaiveUIDiscreteAPI.loadingBar.start();
   next();
 });
-router.afterEach(() => {
-  NaiveUIDiscreteAPI.loadingBar.finish();
+router.afterEach((to) => {
+  if (to.name !== "Home") NaiveUIDiscreteAPI.loadingBar.finish();
 });
 
 export default router;

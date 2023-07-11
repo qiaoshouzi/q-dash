@@ -32,19 +32,32 @@ import { zhCN, dateZhCN, darkTheme, NGlobalStyle, NConfigProvider } from "naive-
 import router from "@/router";
 import { useCounterStore } from "@/stores/counter";
 
+import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
+
 const counter = useCounterStore();
 
 const menuValue = ref<string>(
   (() => {
-    if (location.pathname === "/") return "Home";
-    else if (location.pathname === "/anime") return "Anime";
-    else return "";
+    switch (location.pathname) {
+      case "/":
+        return "Home";
+      case "/dynamic":
+        return "Dynamic";
+      case "/anime":
+        return "Anime";
+      default:
+        return "";
+    }
   })()
 );
 const menuOptions: MenuOption[] = [
   {
     label: () => h(RouterLink, { to: "/" }, { default: () => "Home" }),
     key: "Home",
+  },
+  {
+    label: () => h(RouterLink, { to: "/dynamic" }, { default: () => "Dynamic" }),
+    key: "Dynamic",
   },
   {
     label: () => h(RouterLink, { to: "/anime" }, { default: () => "Anime" }),
@@ -66,6 +79,41 @@ window.addEventListener("resize", () => {
   resizeEvent();
 });
 resizeEvent();
+
+// getConfig
+const initConfig = async () => {
+  NaiveUIDiscreteAPI.loadingBar.start();
+  try {
+    const resp = await fetch(
+      `https://${import.meta.env.Q_API_HostName}/api/getConfig?token=${import.meta.env.Q_TOKEN}`
+    );
+    if (resp.status !== 200) throw `status error: ${resp.status}`;
+    const resp_json = (await resp.json()) as {
+      code: number;
+      message: string;
+      data: { [key: string]: any };
+    };
+    if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
+    counter.catchDynamicStatus = (() => {
+      const t = resp_json.data.updateSwitch;
+      if (t === "true") return true;
+      else if (t === "false") return false;
+    })();
+    counter.pinDynamicID = (() => {
+      const t = resp_json.data.pin;
+      if (/^\d+$/.test(t)) return t;
+    })();
+    counter.latestUpdateBiliBiliLoginTS = (() => {
+      const t = JSON.parse(resp_json.data["bilibili-login"]);
+      return t.ts;
+    })();
+    NaiveUIDiscreteAPI.loadingBar.finish();
+  } catch (e) {
+    NaiveUIDiscreteAPI.loadingBar.error();
+    NaiveUIDiscreteAPI.message.error(`获取config失败, ${e}`);
+  }
+};
+initConfig();
 </script>
 
 <style>

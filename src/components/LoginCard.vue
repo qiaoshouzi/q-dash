@@ -10,6 +10,7 @@
         : 'info'
     "
     :size="counter.pageSize === 'pc' ? 'medium' : 'small'"
+    :style="props.style"
     @click="openModalButtonClick"
   >
     BiliBili登录信息
@@ -51,6 +52,11 @@ import QRCode from "qrcode";
 import { useCounterStore } from "@/stores/counter";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
+const props = defineProps({
+  style: {
+    type: Object,
+  }, // 样式
+});
 const counter = useCounterStore();
 
 const showModal = ref<boolean>(false);

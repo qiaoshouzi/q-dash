@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 const DynamicView = () => import("@/views/DynamicView.vue");
 const AnimeView = () => import("@/views/AnimeView.vue");
+const TodoView = () => import("@/views/TodoView.vue");
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
     path: "/anime",
     name: "Anime",
     component: AnimeView,
+  },
+  {
+    path: "/todo",
+    name: "Todo",
+    component: TodoView,
   },
 ];
 

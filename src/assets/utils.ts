@@ -13,3 +13,13 @@ export const getAssetsUrl = (url: string): string => {
   }
   return rUrl.toString();
 };
+
+export const moveArrValue = (arr: any[], index: number, positions: number) => {
+  const value = arr[index];
+  const newIndex = index + positions;
+
+  arr.splice(index, 1);
+  arr.splice(newIndex, 0, value);
+
+  return arr;
+};

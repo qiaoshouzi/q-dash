@@ -71,6 +71,8 @@ const menuValue = ref<string>(
         return "Dynamic";
       case "/anime":
         return "Anime";
+      case "/todo":
+        return "Todo";
       default:
         return "";
     }
@@ -88,6 +90,10 @@ const menuOptions: MenuOption[] = [
   {
     label: () => h(RouterLink, { to: "/anime" }, { default: () => "Anime" }),
     key: "Anime",
+  },
+  {
+    label: () => h(RouterLink, { to: "/todo" }, { default: () => "Todo" }),
+    key: "Todo",
   },
 ];
 

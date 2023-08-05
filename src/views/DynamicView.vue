@@ -39,8 +39,24 @@
         前往固定动态
       </n-button>
     </div>
-    <!-- 登录管理 -->
-    <LoginCard />
+    <div style="display: flex; flex-wrap: wrap; gap: 5px">
+      <div
+        :style="{
+          'flex-basis': counter.pageSize === 'pc' ? 'calc(50% - 2.5px)' : 'calc(100%)',
+        }"
+      >
+        <!-- 登录管理 -->
+        <LoginCard />
+      </div>
+      <div
+        :style="{
+          'flex-basis': counter.pageSize === 'pc' ? 'calc(50% - 2.5px)' : 'calc(100%)',
+        }"
+      >
+        <!-- 批量删除 -->
+        <BatchDeleteModal @update="main" />
+      </div>
+    </div>
   </div>
   <!-- 显示动态 -->
   <div v-for="value in nowDynamicList" :key="value[0]" style="margin-bottom: 10px">
@@ -51,6 +67,19 @@
         'border-color': value[0] === counter.pinDynamicID ? '#63e2b7' : undefined,
       }"
     />
+  </div>
+  <!-- 无动态 -->
+  <div v-if="dynamicList === undefined || dynamicList.length === 0">
+    <n-card
+      size="small"
+      :bordered="counter.pageSize === 'pc'"
+      :style="{
+        'border-left': counter.pageSize === 'phone' ? 'none' : undefined,
+        'border-right': counter.pageSize === 'phone' ? 'none' : undefined,
+      }"
+    >
+      <n-empty description="无动态" />
+    </n-card>
   </div>
   <!-- 获取失败 -->
   <n-card v-if="showErrorCard" style="margin-bottom: 10px">
@@ -73,7 +102,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
-import { NCard, NResult, NButton } from "naive-ui";
+import { NCard, NResult, NButton, NEmpty } from "naive-ui";
 import { useUrlSearchParams } from "@vueuse/core";
 
 import { useCounterStore } from "@/stores/counter";
@@ -81,6 +110,7 @@ import { useCounterStore } from "@/stores/counter";
 import LoginCard from "@/components/LoginCard.vue";
 import PaginationCard from "@/components/PaginationCard.vue";
 import DynamicCard from "@/components/Dynamic/DynamicCard.vue";
+import BatchDeleteModal from "@/components/Dynamic/BatchDeleteModal.vue";
 
 const counter = useCounterStore();
 

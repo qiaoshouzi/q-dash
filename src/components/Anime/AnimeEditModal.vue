@@ -221,7 +221,6 @@ const updateImageButtonClick = () => {
 
 const updateDataButtonLoading = ref<boolean>(false);
 const updateDataButtonClick = async () => {
-  NaiveUIDiscreteAPI.loadingBar.start();
   updateDataButtonLoading.value = true;
 
   const coverData = await (async () => {

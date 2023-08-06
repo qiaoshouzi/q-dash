@@ -5,7 +5,7 @@ export default async <T = any>(
   path: string,
   method: "GET" | "POST" | "DELETE",
   opts: {
-    body?: { [key: string]: any };
+    body?: { [key: string]: any } | FormData;
     param?: { [key: string]: any };
   } = {}
 ): Promise<
@@ -29,7 +29,12 @@ export default async <T = any>(
 
     const resp = await fetch(String(url), {
       method,
-      body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+      body:
+        opts.body !== undefined
+          ? opts.body instanceof FormData
+            ? opts.body
+            : JSON.stringify(opts.body)
+          : undefined,
     });
     if (resp.status !== 200) throw `status error: ${resp.status}`;
 

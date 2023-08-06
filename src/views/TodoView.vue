@@ -38,7 +38,6 @@
     @click:delete="
       (v) => {
         todoData.forEach((d, index) => {
-          console.log(index, d);
           if (d.id === v.id) {
             todoData.splice(index, 1);
             return;

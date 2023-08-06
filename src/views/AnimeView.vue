@@ -99,13 +99,12 @@ import {
   NCollapseTransition,
 } from "naive-ui";
 
-import { useCounterStore } from "@/stores/counter";
-
+import API from "@/assets/API";
 import type { AnimeData } from "@/types/anime";
-import RadioButton from "@/components/RadioButtonComponent.vue";
+import { useCounterStore } from "@/stores/counter";
 import AnimeCard from "@/components/Anime/AnimeCard.vue";
+import RadioButton from "@/components/RadioButtonComponent.vue";
 import AnimeEditModal from "@/components/Anime/AnimeEditModal.vue";
-import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
 const counter = useCounterStore();
 
@@ -177,20 +176,9 @@ window.addEventListener("resize", () => resizeEvent());
 onMounted(() => resizeEvent());
 
 const main = async () => {
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/anime?token=${import.meta.env.Q_TOKEN}`
-    );
-    if (resp.status !== 200) throw `resp.status = ${resp.status}`;
-    const resp_json = await resp.json();
-    if (resp_json.code !== 200) throw `code: ${resp_json.code}\nmessage: ${resp_json.message}`;
+  const resp_json = await API<AnimeData[]>("获取Anime", "/api/anime", "GET");
+  if (resp_json) {
     animeData.value = resp_json.data;
-  } catch (e) {
-    NaiveUIDiscreteAPI.notification.error({
-      title: "Get Anime List Data Error",
-      content: String(e),
-      duration: 5000,
-    });
   }
 };
 main();

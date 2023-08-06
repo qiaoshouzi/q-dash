@@ -65,11 +65,11 @@
 import { ref } from "vue";
 import { NCard, NButton } from "naive-ui";
 
+import API from "@/assets/API";
 import type { TodoData } from "@/types/todo";
 import { useCounterStore } from "@/stores/counter";
 import DataCard from "@/components/Todo/DataCard.vue";
 import ViewModal from "@/components/Todo/ViewModal.vue";
-import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
 const counter = useCounterStore();
 
@@ -80,23 +80,9 @@ const viewModalCreateValue = ref<boolean | undefined>(undefined);
 const todoData = ref<TodoData[]>([]);
 
 const main = async () => {
-  NaiveUIDiscreteAPI.loadingBar.start();
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/todo?token=${import.meta.env.Q_TOKEN}`
-    );
-    if (resp.status !== 200) throw `status error: ${resp.status}`;
-    const resp_json = (await resp.json()) as {
-      code: number;
-      message: string;
-      data: TodoData[];
-    };
-    if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
+  const resp_json = await API<TodoData[]>("获取 Todo", "/api/todo", "GET");
+  if (resp_json) {
     todoData.value = resp_json.data;
-    NaiveUIDiscreteAPI.loadingBar.finish();
-  } catch (e) {
-    NaiveUIDiscreteAPI.loadingBar.error();
-    NaiveUIDiscreteAPI.message.error(`获取 todo 失败, ${e}`);
   }
 };
 main();

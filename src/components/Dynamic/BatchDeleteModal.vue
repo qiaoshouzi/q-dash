@@ -35,6 +35,7 @@
 import { ref } from "vue";
 import { NButton, NModal, NRadioGroup, NRadio } from "naive-ui";
 
+import API from "@/assets/API";
 import { useCounterStore } from "@/stores/counter";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
@@ -85,25 +86,12 @@ const deleteButtonClick = () => {
         }
       })();
 
-      try {
-        const resp = await fetch(
-          `https://${import.meta.env.Q_API_HostName}/api/deleteDynamic?token=${
-            import.meta.env.Q_TOKEN
-          }&scope=${scope}`
-        );
-        if (resp.status !== 200) throw `status error: ${resp.status}`;
-        const resp_json = (await resp.json()) as {
-          code: number;
-          message: string;
-        };
-        if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
-        NaiveUIDiscreteAPI.message.success(resp_json.message);
-        NaiveUIDiscreteAPI.loadingBar.finish();
+      const resp_json = await API<undefined>("批量删除动态", "/api/dynamic", "DELETE", {
+        param: { scope: scope },
+      });
+      if (resp_json) {
         showModal.value = false;
         emit("update");
-      } catch (e) {
-        NaiveUIDiscreteAPI.message.error(`删除失败, ${e}`);
-        NaiveUIDiscreteAPI.loadingBar.error();
       }
     },
   });

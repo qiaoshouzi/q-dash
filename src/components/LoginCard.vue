@@ -49,6 +49,7 @@ import { ref } from "vue";
 import { NButton, NTime, NModal, NSkeleton } from "naive-ui";
 import QRCode from "qrcode";
 
+import API from "@/assets/API";
 import { useCounterStore } from "@/stores/counter";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
@@ -70,81 +71,48 @@ const openModalButtonClick = async () => {
   loginMessage.value = "未扫码";
   showModal.value = true;
 
-  const resp = await fetch(
-    `https://${import.meta.env.Q_API_HostName}/api/login-bilibili/get-qrcode?token=${
-      import.meta.env.Q_TOKEN
-    }`
-  );
-  if (resp.status !== 200) {
-    console.error(`获取二维码失败, resp.status error: ${resp.status}`);
-    NaiveUIDiscreteAPI.message.error(`获取二维码失败, resp.status error: ${resp.status}`);
-    return;
+  const resp_json = await API<{
+    url: string; // qr url
+    qrcode_key: string;
+  }>("获取登录BiliBili二维码", "/api/login-bilibili/get-qrcode", "GET");
+  if (resp_json) {
+    QRCodeKey.value = resp_json.data.qrcode_key;
+    QRCodeImage.value = await QRCode.toDataURL(resp_json.data.url);
   }
-  const resp_json = (await resp.json()) as {
-    code: number;
-    message: string;
-    data: {
-      url: string; // qr url
-      qrcode_key: string;
-    };
-  };
-  if (resp_json.code !== 200) {
-    console.error(`获取二维码失败, resp_json.code error: (${resp_json.code})${resp_json.message}`);
-    NaiveUIDiscreteAPI.message.error(
-      `获取二维码失败, resp_json.code error: (${resp_json.code})${resp_json.message}`
-    );
-    return;
-  }
-  QRCodeKey.value = resp_json.data.qrcode_key;
-  QRCodeImage.value = await QRCode.toDataURL(resp_json.data.url);
 };
 
 const loginButtonClick = async () => {
-  const resp = await fetch(
-    `https://${import.meta.env.Q_API_HostName}/api/login-bilibili/login?qrcode_key=${
-      QRCodeKey.value
-    }&token=${import.meta.env.Q_TOKEN}`
-  );
-  if (resp.status !== 200) {
-    console.error(`登录失败, resp.status error: ${resp.status}`);
-    NaiveUIDiscreteAPI.message.error(`登录失败, resp.status error: ${resp.status}`);
-  }
-  const resp_json = (await resp.json()) as {
-    code: number;
-    message: string;
-    data:
-      | {
-          code: 86038;
-          message: string;
-          data: {
-            url: string; // qr url
-            qrcode_key: string;
-          };
-        }
-      | {
-          code: 0 | 86090 | 86101;
-          message: string;
-          timestamp: number;
+  const resp_json = await API<
+    | {
+        code: 86038;
+        message: string;
+        data: {
+          url: string; // qr url
+          qrcode_key: string;
         };
-  };
-  if (resp_json.code !== 200) {
-    console.error(`登录失败, resp_json.code error: (${resp_json.code})${resp_json.message}`);
-    NaiveUIDiscreteAPI.message.error(
-      `登录失败, resp_json.code error: (${resp_json.code})${resp_json.message}`
-    );
-  }
-  loginMessage.value = resp_json.data.message;
-  if (resp_json.data.code === 0) {
-    showModal.value = false;
-    counter.latestUpdateBiliBiliLoginTS = resp_json.data.timestamp;
-    NaiveUIDiscreteAPI.message.success("登录成功");
-  } else {
-    NaiveUIDiscreteAPI.message.warning(loginMessage.value);
-    if (resp_json.data.code === 86038) {
-      QRCodeImage.value = undefined;
-      QRCodeKey.value = resp_json.data.data.qrcode_key;
-      QRCodeImage.value = await QRCode.toDataURL(resp_json.data.data.url);
-      loginMessage.value = "未扫码";
+      }
+    | {
+        code: 0 | 86090 | 86101;
+        message: string;
+        timestamp: number;
+      }
+  >("登录BiliBili", "/api/login-bilibili/login", "GET", {
+    param: { qrcode_key: QRCodeKey.value },
+  });
+  if (resp_json) {
+    loginMessage.value = resp_json.data.message;
+    if (resp_json.data.code === 0) {
+      showModal.value = false;
+      counter.latestUpdateBiliBiliLoginTS = resp_json.data.timestamp;
+      NaiveUIDiscreteAPI.message.success("登录成功");
+    } else {
+      NaiveUIDiscreteAPI.message.warning(loginMessage.value);
+      if (resp_json.data.code === 86038) {
+        QRCodeImage.value = undefined;
+        QRCodeKey.value = resp_json.data.data.qrcode_key;
+        QRCodeImage.value = await QRCode.toDataURL(resp_json.data.data.url);
+        loginMessage.value = "未扫码";
+      }
     }
   }
 };

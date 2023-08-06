@@ -169,6 +169,7 @@
 import { ref, watch, type PropType } from "vue";
 import { NButton, NModal, NCheckbox, NRadio, NTag, NEmpty } from "naive-ui";
 
+import API from "@/assets/API";
 import type { TodoData } from "@/types/todo";
 import { moveArrValue } from "@/assets/utils";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
@@ -216,61 +217,25 @@ watch(props, (props) => {
 
 const checkboxValueUpdate = async (v: boolean, index: number) => {
   todoData.value.list[index][1] = v;
-  NaiveUIDiscreteAPI.loadingBar.start();
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/todo?token=${import.meta.env.Q_TOKEN}`,
-      {
-        method: "POST",
-        body: JSON.stringify(todoData.value),
-      }
-    );
-    if (resp.status !== 200) throw `status error: ${resp.status}`;
-    const resp_json = (await resp.json()) as {
-      code: number;
-      message: string;
-      data: TodoData[];
-    };
-    if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
-    NaiveUIDiscreteAPI.message.success(resp_json.message);
-    NaiveUIDiscreteAPI.loadingBar.finish();
-  } catch (e) {
-    NaiveUIDiscreteAPI.loadingBar.error();
-    NaiveUIDiscreteAPI.message.error(`更新 Todo 失败, ${e}`);
+  const resp_json = await API<TodoData[]>("更新 Todo", "/api/todo", "POST", {
+    body: todoData.value,
+  });
+  if (resp_json) {
+    editMode.value = false; // 更新成功, 关闭 editMode
+    emit("update:data", JSON.parse(JSON.stringify(todoData.value)));
+  } else {
     todoData.value.list[index][1] = !v;
-    return;
   }
-  editMode.value = false; // 更新成功, 关闭 editMode
-  emit("update:data", JSON.parse(JSON.stringify(todoData.value)));
 };
 const deleteButtonClick = async () => {
   // 删除 Todo
-  NaiveUIDiscreteAPI.loadingBar.start();
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/todo?token=${import.meta.env.Q_TOKEN}&id=${
-        todoData.value.id
-      }`,
-      {
-        method: "DELETE",
-      }
-    );
-    if (resp.status !== 200) throw `status error: ${resp.status}`;
-    const resp_json = (await resp.json()) as {
-      code: number;
-      message: string;
-      data: TodoData[];
-    };
-    if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
-    NaiveUIDiscreteAPI.message.success(resp_json.message);
-    NaiveUIDiscreteAPI.loadingBar.finish();
-  } catch (e) {
-    NaiveUIDiscreteAPI.loadingBar.error();
-    NaiveUIDiscreteAPI.message.error(`删除 Todo 失败, ${e}`);
-    return;
+  const resp_json = await API<TodoData[]>("删除 Todo", "/api/todo", "DELETE", {
+    param: { id: todoData.value.id },
+  });
+  if (resp_json) {
+    emit("update:show", false); // 删除成功, 关闭窗口
+    emit("click:delete", todoData.value);
   }
-  emit("update:show", false); // 删除成功, 关闭窗口
-  emit("click:delete", todoData.value);
 };
 const editSaveButtonClick = async () => {
   if (props.template) {
@@ -280,35 +245,15 @@ const editSaveButtonClick = async () => {
       editMode.value = false;
       return;
     }
-    NaiveUIDiscreteAPI.loadingBar.start();
-    try {
-      const resp = await fetch(
-        `https://${import.meta.env.Q_API_HostName}/api/todo/template?token=${
-          import.meta.env.Q_TOKEN
-        }`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            ...todoData.value,
-            list: todoData.value.list.map((v) => v[0]),
-          }),
-        }
-      );
-      if (resp.status !== 200) throw `status error: ${resp.status}`;
-      const resp_json = (await resp.json()) as {
-        code: number;
-        message: string;
-        data: TodoData[];
-      };
-      if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
-      NaiveUIDiscreteAPI.message.success(resp_json.message);
-      NaiveUIDiscreteAPI.loadingBar.finish();
-    } catch (e) {
-      NaiveUIDiscreteAPI.loadingBar.error();
-      NaiveUIDiscreteAPI.message.error(`更新 Todo模板 失败, ${e}`);
-      return;
+    const resp_json = await API<TodoData[]>("更新 Todo模板", "/api/todo/template", "POST", {
+      body: {
+        ...todoData.value,
+        list: todoData.value.list.map((v) => v[0]),
+      },
+    });
+    if (resp_json) {
+      emit("update:show", false);
     }
-    emit("update:show", false);
   } else {
     // 更新 Todo
     if (JSON.stringify(props.data) === JSON.stringify(todoData.value)) {
@@ -316,31 +261,13 @@ const editSaveButtonClick = async () => {
       editMode.value = false;
       return;
     }
-    NaiveUIDiscreteAPI.loadingBar.start();
-    try {
-      const resp = await fetch(
-        `https://${import.meta.env.Q_API_HostName}/api/todo?token=${import.meta.env.Q_TOKEN}`,
-        {
-          method: "POST",
-          body: JSON.stringify(todoData.value),
-        }
-      );
-      if (resp.status !== 200) throw `status error: ${resp.status}`;
-      const resp_json = (await resp.json()) as {
-        code: number;
-        message: string;
-        data: TodoData[];
-      };
-      if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
-      NaiveUIDiscreteAPI.message.success(resp_json.message);
-      NaiveUIDiscreteAPI.loadingBar.finish();
-    } catch (e) {
-      NaiveUIDiscreteAPI.loadingBar.error();
-      NaiveUIDiscreteAPI.message.error(`更新 Todo 失败, ${e}`);
-      return;
+    const resp_json = await API<TodoData[]>("更新 Todo", "/api/todo", "POST", {
+      body: todoData.value,
+    });
+    if (resp_json) {
+      if (todoData.value.id === -1) emit("update:show", false); // 创建成功, 关闭 Modal, 获取 id
+      else editMode.value = false; // 更新成功, 关闭 editMode
     }
-    if (todoData.value.id === -1) emit("update:show", false); // 创建成功, 关闭 Modal, 获取 id
-    else editMode.value = false; // 更新成功, 关闭 editMode
   }
 
   emit("update:data", JSON.parse(JSON.stringify(todoData.value)));

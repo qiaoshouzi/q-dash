@@ -105,9 +105,9 @@ import { ref, watch, computed } from "vue";
 import { NCard, NResult, NButton, NEmpty } from "naive-ui";
 import { useUrlSearchParams } from "@vueuse/core";
 
-import { useCounterStore } from "@/stores/counter";
-
+import API from "@/assets/API";
 import LoginCard from "@/components/LoginCard.vue";
+import { useCounterStore } from "@/stores/counter";
 import PaginationCard from "@/components/PaginationCard.vue";
 import DynamicCard from "@/components/Dynamic/DynamicCard.vue";
 import BatchDeleteModal from "@/components/Dynamic/BatchDeleteModal.vue";
@@ -186,26 +186,9 @@ const goPinDynamicButtonClick = () => {
 
 // 获取data
 const main = async () => {
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/getAllDynamicData?token=${
-        import.meta.env.Q_TOKEN
-      }`
-    );
-    const resp_json = (await resp.json()) as {
-      code: number;
-      message: string;
-      data: DynamicList;
-    };
-    if (resp_json.code !== 200) {
-      showErrorCard.value = true;
-      errorMessages.value = `${resp_json.code}: ${resp_json.message}`;
-    } else {
-      dynamicList.value = resp_json.data;
-    }
-  } catch (e) {
-    showErrorCard.value = true;
-    errorMessages.value = String(e);
+  const resp_json = await API<DynamicList>("获取动态", "/api/dynamic", "GET");
+  if (resp_json) {
+    dynamicList.value = resp_json.data;
   }
 };
 main();

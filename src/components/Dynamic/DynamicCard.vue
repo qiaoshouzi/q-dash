@@ -241,11 +241,10 @@
 import { ref, watch } from "vue";
 import { NA, NCard, NAvatar, NTime, NSpace, NText, NTag, NIcon, NButton } from "naive-ui";
 
-import { useCounterStore } from "@/stores/counter";
-
+import API from "@/assets/API";
 import { getAssetsUrl } from "@/assets/utils";
+import { useCounterStore } from "@/stores/counter";
 import type { DynamicItem } from "@/types/dynamics";
-import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
 import OPUSCard from "@/components/Dynamic/OPUSCard.vue";
 import ImageCard from "@/components/Dynamic/ImageCard.vue";
@@ -307,27 +306,15 @@ const parseOrig = (orig: string | DynamicItem, type: "id" | "raw"): string | und
 // pinDynamic
 const setPinButtonClick = async () => {
   const action = counter.pinDynamicID === props.dynamicID ? "delete" : "add";
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/pin?token=${import.meta.env.Q_TOKEN}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          dynamicID: props.dynamicID,
-          action,
-        }),
-      }
-    );
-    const resp_json = await resp.json();
-    if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
-    else {
-      NaiveUIDiscreteAPI.message.success(resp_json.message);
-      if (action === "add") counter.pinDynamicID = props.dynamicID;
-      else counter.pinDynamicID = undefined;
-    }
-  } catch (e) {
-    console.error(e);
-    NaiveUIDiscreteAPI.message.error(`设置固定动态失败, ${e}`);
+  const resp_json = await API("设置固定动态", "/api/dynamic/pin", "POST", {
+    body: {
+      dynamicID: props.dynamicID,
+      action,
+    },
+  });
+  if (resp_json) {
+    if (action === "add") counter.pinDynamicID = props.dynamicID;
+    else counter.pinDynamicID = undefined;
   }
 };
 </script>

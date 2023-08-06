@@ -120,9 +120,9 @@
 import { ref, type PropType } from "vue";
 import { NModal, NRadio, NButton } from "naive-ui";
 
+import API from "@/assets/API";
 import ViewModal from "./ViewModal.vue";
 import type { TemplateData, TodoData } from "@/types/todo";
-import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
 const props = defineProps({
   todoData: {
@@ -143,80 +143,28 @@ const viewModalData = ref<TodoData | undefined>(undefined);
 const templateData = ref<TemplateData[]>([]);
 
 const saveTemplate = async () => {
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/todo/template?token=${
-        import.meta.env.Q_TOKEN
-      }`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          id: -1,
-          title: props.todoData.title,
-          list: props.todoData.list.map((v) => v[0]),
-        }),
-      }
-    );
-    if (resp.status !== 200) throw `status error: ${resp.status}`;
-    const resp_json = (await resp.json()) as {
-      code: number;
-      message: string;
-      data: TodoData[];
-    };
-    if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
-    NaiveUIDiscreteAPI.message.success(resp_json.message);
-    NaiveUIDiscreteAPI.loadingBar.finish();
-  } catch (e) {
-    NaiveUIDiscreteAPI.loadingBar.error();
-    NaiveUIDiscreteAPI.message.error(`更新 Todo模板 失败, ${e}`);
-  }
+  await API<TodoData[]>("更新 Todo模板", "/api/todo/template", "POST", {
+    body: {
+      id: -1,
+      title: props.todoData.title,
+      list: props.todoData.list.map((v) => v[0]),
+    },
+  });
 };
 const deleteTemplate = async () => {
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/todo/template?token=${
-        import.meta.env.Q_TOKEN
-      }&id=${templateData.value[selectValueIndex.value].id}`,
-      {
-        method: "DELETE",
-      }
-    );
-    if (resp.status !== 200) throw `status error: ${resp.status}`;
-    const resp_json = (await resp.json()) as {
-      code: number;
-      message: string;
-      data: TodoData[];
-    };
-    if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
-    NaiveUIDiscreteAPI.message.success(resp_json.message);
-    NaiveUIDiscreteAPI.loadingBar.finish();
-  } catch (e) {
-    NaiveUIDiscreteAPI.loadingBar.error();
-    NaiveUIDiscreteAPI.message.error(`删除 Todo模板 失败, ${e}`);
-    return;
+  const resp_json = await API<TodoData[]>("删除 Todo模板", "/api/todo/template", "DELETE", {
+    param: { id: templateData.value[selectValueIndex.value].id },
+  });
+  if (resp_json) {
+    // 更新删除本地数据
+    templateData.value.splice(selectValueIndex.value, 1);
+    selectValueIndex.value = -1;
   }
-  // 更新删除本地数据
-  templateData.value.splice(selectValueIndex.value, 1);
-  selectValueIndex.value = -1;
 };
 const getTemplate = async () => {
-  NaiveUIDiscreteAPI.loadingBar.start();
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/todo/template?token=${import.meta.env.Q_TOKEN}`
-    );
-    if (resp.status !== 200) throw `status error: ${resp.status}`;
-    const resp_json = (await resp.json()) as {
-      code: number;
-      message: string;
-      data: TemplateData[];
-    };
-    if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
+  const resp_json = await API<TemplateData[]>("获取 Todo模板", "/api/todo/template", "GET");
+  if (resp_json) {
     templateData.value = resp_json.data;
-    NaiveUIDiscreteAPI.loadingBar.finish();
-  } catch (e) {
-    NaiveUIDiscreteAPI.loadingBar.error();
-    NaiveUIDiscreteAPI.message.error(`获取 Todo模板 失败, ${e}`);
   }
 };
 </script>

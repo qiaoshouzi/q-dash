@@ -103,8 +103,9 @@ import {
   NInputNumber,
 } from "naive-ui";
 
-import type { AnimeData } from "@/types/anime";
+import API from "@/assets/API";
 import { getAssetsUrl } from "@/assets/utils";
+import type { AnimeData } from "@/types/anime";
 import { useCounterStore } from "@/stores/counter";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
@@ -243,32 +244,14 @@ const updateDataButtonClick = async () => {
     })
   );
 
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/anime?token=${import.meta.env.Q_TOKEN}`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-    if (resp.status !== 200) throw `status error ${resp.status}`;
-    const resp_json = await resp.json();
-    if (resp_json.code !== 200) throw `code error (${resp_json.code})${resp_json.message}`;
-    else {
-      NaiveUIDiscreteAPI.message.success("提交成功");
-      if (animeData.value.cover.startsWith("blob:")) {
-        URL.revokeObjectURL(animeData.value.cover);
-      }
-      emit("refresh");
-      NaiveUIDiscreteAPI.loadingBar.finish();
+  const resp_json = await API("更新Anime", "/api/anime", "POST", {
+    body: formData,
+  });
+  if (resp_json) {
+    if (animeData.value.cover.startsWith("blob:")) {
+      URL.revokeObjectURL(animeData.value.cover);
     }
-  } catch (e) {
-    NaiveUIDiscreteAPI.notification.error({
-      title: "Update Anime Data Error",
-      content: String(e),
-      duration: 5000,
-    });
-    NaiveUIDiscreteAPI.loadingBar.error();
+    emit("refresh");
   }
   updateDataButtonLoading.value = false;
 };
@@ -285,29 +268,11 @@ const deleteButtonClick = async () => {
       deleteButtonLoading.value = false;
     },
     onPositiveClick: async () => {
-      NaiveUIDiscreteAPI.loadingBar.start();
-      try {
-        const resp = await fetch(
-          `https://${import.meta.env.Q_API_HostName}/api/anime?token=${
-            import.meta.env.Q_TOKEN
-          }&id=${animeData.value.id}`,
-          { method: "DELETE" }
-        );
-        if (resp.status !== 200) throw `status error ${resp.status}`;
-        const resp_json = await resp.json();
-        if (resp_json.code !== 200) throw `code error (${resp_json.code})${resp_json.message}`;
-        else {
-          NaiveUIDiscreteAPI.message.success("删除成功");
-          emit("delete");
-          NaiveUIDiscreteAPI.loadingBar.finish();
-        }
-      } catch (e) {
-        NaiveUIDiscreteAPI.notification.error({
-          title: "DELETE Anime Data Error",
-          content: String(e),
-          duration: 5000,
-        });
-        NaiveUIDiscreteAPI.loadingBar.error();
+      const resp_json = await API("删除Anime", "/api/anime", "DELETE", {
+        param: { id: animeData.value.id },
+      });
+      if (resp_json) {
+        emit("delete");
       }
       deleteButtonLoading.value = false;
     },

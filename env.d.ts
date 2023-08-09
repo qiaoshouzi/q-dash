@@ -4,8 +4,6 @@ interface ImportMetaEnv {
   readonly Q_Old_Assets_HostName: string;
 
   readonly Q_API_HostName: string;
-
-  readonly Q_TOKEN: string;
 }
 
 interface ImportMeta {

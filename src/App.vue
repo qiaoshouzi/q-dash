@@ -25,7 +25,7 @@
           class="container"
           :style="{ padding: counter.pageSize === 'pc' ? '20px 16px' : '20px 0 104px 0' }"
         >
-          <router-view />
+          <router-view v-if="showContent" />
         </div>
       </n-layout-content>
       <n-layout-footer
@@ -56,9 +56,8 @@ import {
 import { zhCN, dateZhCN, darkTheme, NGlobalStyle, NConfigProvider } from "naive-ui"; // NaiveUI Config
 
 import router from "@/router";
+import API from "@/assets/API";
 import { useCounterStore } from "@/stores/counter";
-
-import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
 const counter = useCounterStore();
 
@@ -113,39 +112,42 @@ window.addEventListener("resize", () => {
 resizeEvent();
 
 // getConfig
+let isInit: boolean = false;
+const showContent = ref<boolean>(false);
 const initConfig = async () => {
-  NaiveUIDiscreteAPI.loadingBar.start();
-  try {
-    const resp = await fetch(
-      `https://${import.meta.env.Q_API_HostName}/api/getConfig?token=${import.meta.env.Q_TOKEN}`
-    );
-    if (resp.status !== 200) throw `status error: ${resp.status}`;
-    const resp_json = (await resp.json()) as {
-      code: number;
-      message: string;
-      data: { [key: string]: any };
-    };
-    if (resp_json.code !== 200) throw `code error(${resp_json.code}): ${resp_json.message}`;
-    counter.catchDynamicStatus = (() => {
-      const t = resp_json.data.updateSwitch;
-      if (t === "true") return true;
-      else if (t === "false") return false;
-    })();
-    counter.pinDynamicID = (() => {
-      const t = resp_json.data.pin;
-      if (/^\d+$/.test(t)) return t;
-    })();
-    counter.latestUpdateBiliBiliLoginTS = (() => {
-      const t = JSON.parse(resp_json.data["bilibili-login"]);
-      return t.ts;
-    })();
-    NaiveUIDiscreteAPI.loadingBar.finish();
-  } catch (e) {
-    NaiveUIDiscreteAPI.loadingBar.error();
-    NaiveUIDiscreteAPI.message.error(`获取config失败, ${e}`);
-  }
+  const resp_json = await API<{
+    "api-token": string;
+    "bilibili-login": string;
+    latestUpdateTime: string | null;
+    pin: string | null;
+    updateSwitch: string;
+  }>("获取Config", "/api/getConfig", "GET");
+  if (!resp_json) return;
+  counter.catchDynamicStatus = (() => {
+    const t = resp_json.data.updateSwitch;
+    if (t === "true") return true;
+    else if (t === "false") return false;
+  })();
+  counter.pinDynamicID = (() => {
+    const t = String(resp_json.data.pin);
+    if (/^\d+$/.test(t)) return t;
+  })();
+  counter.latestUpdateBiliBiliLoginTS = (() => {
+    const t = JSON.parse(resp_json.data["bilibili-login"]);
+    return t.ts;
+  })();
+  counter.apiToken = resp_json.data["api-token"];
+  isInit = true;
+  showContent.value = true;
 };
-initConfig();
+router.afterEach((to) => {
+  showContent.value = isInit;
+  if (to.name !== "Login" && !isInit) {
+    initConfig();
+  } else {
+    showContent.value = true;
+  }
+});
 </script>
 
 <style>

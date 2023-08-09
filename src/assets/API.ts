@@ -1,3 +1,4 @@
+import { useCounterStore } from "@/stores/counter";
 import NaiveUIDiscreteAPI from "./NaiveUIDiscreteAPI";
 
 export default async <T = any>(
@@ -16,11 +17,12 @@ export default async <T = any>(
     }
   | undefined
 > => {
+  const counter = useCounterStore();
   NaiveUIDiscreteAPI.loadingBar.start();
   try {
     const url = new URL(`https://${import.meta.env.Q_API_HostName}`);
     url.pathname = path;
-    url.searchParams.append("token", import.meta.env.Q_TOKEN);
+    url.searchParams.append("token", counter.apiToken);
     if (opts.param) {
       for (const i in opts.param) {
         url.searchParams.append(i, opts.param[i]);
@@ -29,6 +31,7 @@ export default async <T = any>(
 
     const resp = await fetch(String(url), {
       method,
+      credentials: "include",
       body:
         opts.body !== undefined
           ? opts.body instanceof FormData
@@ -43,6 +46,18 @@ export default async <T = any>(
       message: string;
       data: any;
     };
+    if (resp_json.code === 403) {
+      NaiveUIDiscreteAPI.loadingBar.error();
+      NaiveUIDiscreteAPI.dialog.warning({
+        title: resp_json.message,
+        content: "是否跳转到登录界面",
+        positiveText: "确定",
+        negativeText: "关闭",
+        onPositiveClick: () => {
+          location.pathname = "/login";
+        },
+      });
+    }
     if (resp_json.code !== 200) throw `${resp_json.code}: ${resp_json.message}`;
 
     if (resp_json.message !== "") NaiveUIDiscreteAPI.message.success(resp_json.message);

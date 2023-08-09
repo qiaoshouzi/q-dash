@@ -487,6 +487,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@simplewebauthn/browser@npm:^7.4.0":
+  version: 7.4.0
+  resolution: "@simplewebauthn/browser@npm:7.4.0"
+  dependencies:
+    "@simplewebauthn/typescript-types": ^7.4.0
+  checksum: dd5fdebeb2910422e18659697c9a96d0cc13a5af7406b35ea3e44269c2430b8619df5e7a91b360dca220e509d6686514c21119f60e73e64b721f0e82bfc9565f
+  languageName: node
+  linkType: hard
+
+"@simplewebauthn/typescript-types@npm:^7.4.0":
+  version: 7.4.0
+  resolution: "@simplewebauthn/typescript-types@npm:7.4.0"
+  checksum: c53fd44eaf9a905ec79f3a7956bebb275dde47079bc8a05e20cf0b5b79cd358f63f60997efcad49d468110ae6d317782becf75c338aa6c48cacd09b839a583b7
+  languageName: node
+  linkType: hard
+
 "@sindresorhus/is@npm:^5.2.0":
   version: 5.4.1
   resolution: "@sindresorhus/is@npm:5.4.1"
@@ -1164,6 +1180,7 @@ __metadata:
   resolution: "bili-dyn-page@workspace:."
   dependencies:
     "@rushstack/eslint-patch": ^1.3.2
+    "@simplewebauthn/browser": ^7.4.0
     "@tsconfig/node16": ^1.0.4
     "@types/node": 16.x
     "@types/qrcode": ^1.5.1

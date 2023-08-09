@@ -7,6 +7,7 @@ interface State {
   catchDynamicStatus: boolean | undefined;
   pinDynamicID: string | undefined;
   latestUpdateBiliBiliLoginTS: number | undefined;
+  apiToken: string;
 }
 
 export const useCounterStore = defineStore("counter", {
@@ -15,6 +16,7 @@ export const useCounterStore = defineStore("counter", {
     catchDynamicStatus: undefined,
     pinDynamicID: undefined,
     latestUpdateBiliBiliLoginTS: undefined,
+    apiToken: "",
   }),
   actions: {
     updateCatchDynamicStatus() {

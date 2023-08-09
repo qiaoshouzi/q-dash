@@ -38,6 +38,9 @@
         </n-button>
       </div>
     </n-card>
+    <div style="margin-top: 10px">
+      <ManageAccessCard />
+    </div>
   </div>
 </template>
 
@@ -46,6 +49,7 @@ import { NH2, NCard, NButton, NGrid, NGi } from "naive-ui";
 
 import { useCounterStore } from "@/stores/counter";
 import LoginCard from "@/components/LoginCard.vue";
+import ManageAccessCard from "@/components/ManageAccessCard.vue";
 
 const counter = useCounterStore();
 

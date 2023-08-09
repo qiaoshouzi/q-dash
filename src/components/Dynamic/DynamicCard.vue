@@ -277,7 +277,7 @@ const getRaw = async (value: { dynamicID: string; raw?: string }) => {
   else {
     const resp = await fetch(
       `https://${import.meta.env.Q_Assets_HostName}/dynamic/${value.dynamicID}.json?token=${
-        import.meta.env.Q_TOKEN
+        counter.apiToken
       }`
     );
     const resp_json = await resp.json();

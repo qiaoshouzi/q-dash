@@ -30,3 +30,17 @@ workbox.routing.registerRoute(
     networkTimeoutSeconds: 3,
   })
 );
+
+workbox.routing.registerRoute(
+  new RegExp(".*.(?:png|jpg|jpeg|svg|gif|webp)"),
+  new workbox.strategies.StaleWhileRevalidate()
+);
+workbox.routing.registerRoute(
+  new RegExp(".*.(css|js)"),
+  new workbox.strategies.StaleWhileRevalidate()
+);
+workbox.routing.setDefaultHandler(
+  new workbox.strategies.NetworkFirst({
+    networkTimeoutSeconds: 3,
+  })
+);

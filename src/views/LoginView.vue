@@ -81,16 +81,19 @@ const getCaptchaToken = async (type: "WebAuth" | "Github"): Promise<string> => {
 };
 
 const toGithub = () => {
-  window.open("https://github.com/login/oauth/authorize?client_id=ce4f35536f672153f7aa");
-};
-const main = async () => {
-  const params = useUrlSearchParams();
-  if (params.from === "github" && params.code) {
+  const newWindow = window.open(
+    "https://github.com/login/oauth/authorize?client_id=ce4f35536f672153f7aa",
+    "通过Github登录",
+    "popup=true,width=350,height=740"
+  );
+  (window as any).onGithubOAuthSuccess = async (code: string) => {
+    newWindow?.close();
+    (window as any).onGithubOAuthSuccess = undefined;
     const captchaToken = await getCaptchaToken("Github");
 
     const resp_json = await API("Github登录", "/api/access/login/github", "POST", {
       body: {
-        code: params.code,
+        code,
         captchaToken,
       },
     });
@@ -98,6 +101,12 @@ const main = async () => {
       // 登陆成功
       await router.push("/");
     }
+  };
+};
+const main = async () => {
+  const params = useUrlSearchParams();
+  if (params.from === "github" && params.code) {
+    window.opener.onGithubOAuthSuccess(params.code);
   }
 };
 main();

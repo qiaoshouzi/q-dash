@@ -9,6 +9,7 @@ import vue from "@vitejs/plugin-vue";
 export default defineConfig(({ command }) => {
   return {
     build: {
+      sourcemap: true,
       rollupOptions: {
         output: {
           entryFileNames: "assets/[hash].js",

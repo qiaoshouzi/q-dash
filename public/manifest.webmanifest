@@ -1,0 +1,25 @@
+{
+  "name": "Qiao's Dash",
+  "short_name": "Qiao's Dash",
+  "start_url": "/",
+  "theme_color": "#18181c",
+  "background_color": "#18181c",
+  "display": "minimal-ui",
+  "icons": [
+    {
+      "src": "/image/boom_512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "/image/boom_100.png",
+      "type": "image/png",
+      "sizes": "100x100"
+    },
+    {
+      "src": "/image/boom_192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ]
+}

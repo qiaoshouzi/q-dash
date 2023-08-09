@@ -4,7 +4,7 @@
       <div style="text-align: center">登录</div>
     </template>
     <div style="display: flex; flex-direction: column; gap: 5px">
-      <n-button strong secondary size="large">
+      <n-button strong secondary size="large" @click="toGithub()">
         <template #icon>
           <n-icon size="18">
             <GithubIcon />
@@ -36,6 +36,7 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue";
 import { useRouter } from "vue-router";
+import { useUrlSearchParams } from "@vueuse/core";
 import { NCard, NButton, NIcon, NModal } from "naive-ui";
 import { startAuthentication } from "@simplewebauthn/browser";
 import type { PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/typescript-types";
@@ -78,6 +79,28 @@ const getCaptchaToken = async (type: "WebAuth" | "Github"): Promise<string> => {
     });
   });
 };
+
+const toGithub = () => {
+  window.open("https://github.com/login/oauth/authorize?client_id=ce4f35536f672153f7aa");
+};
+const main = async () => {
+  const params = useUrlSearchParams();
+  if (params.from === "github" && params.code) {
+    const captchaToken = await getCaptchaToken("Github");
+
+    const resp_json = await API("Github登录", "/api/access/login/github", "POST", {
+      body: {
+        code: params.code,
+        captchaToken,
+      },
+    });
+    if (resp_json) {
+      // 登陆成功
+      await router.push("/");
+    }
+  }
+};
+main();
 
 const loginWithWebAuth = async () => {
   const optionsResp = await API<PublicKeyCredentialRequestOptionsJSON>(

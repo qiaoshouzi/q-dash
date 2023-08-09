@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@simplewebauthn/browser": "7.2.0",
-    "@vueuse/core": "^10.2.1",
+    "@vueuse/core": "^10.3.0",
     "naive-ui": "^2.34.4",
     "pinia": "^2.1.4",
     "qrcode": "^1.5.3",

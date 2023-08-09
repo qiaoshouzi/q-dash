@@ -979,7 +979,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:^10.2.1":
+"@vueuse/core@npm:^10.3.0":
   version: 10.3.0
   resolution: "@vueuse/core@npm:10.3.0"
   dependencies:
@@ -1209,7 +1209,7 @@ __metadata:
     "@vue/eslint-config-prettier": ^7.1.0
     "@vue/eslint-config-typescript": ^11.0.3
     "@vue/tsconfig": ^0.4.0
-    "@vueuse/core": ^10.2.1
+    "@vueuse/core": ^10.3.0
     eslint: ^8.44.0
     eslint-plugin-vue: ^9.15.1
     naive-ui: ^2.34.4

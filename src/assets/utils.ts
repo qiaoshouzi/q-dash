@@ -27,3 +27,14 @@ export const moveArrValue = (arr: any[], index: number, positions: number) => {
 
   return arr;
 };
+
+export const loadScript = (url: string) => {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = url;
+    script.onload = resolve;
+    script.onerror = reject;
+    script.async = true;
+    document.body.appendChild(script);
+  });
+};

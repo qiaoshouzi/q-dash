@@ -22,20 +22,62 @@
       </n-button>
     </div>
   </n-card>
+  <n-modal
+    v-model:show="showCaptchaModal"
+    preset="card"
+    style="width: 332px"
+    size="small"
+    title="人机验证"
+  >
+    <div id="cf-captcha"></div>
+  </n-modal>
 </template>
 
 <script setup lang="ts">
+import { ref, nextTick } from "vue";
 import { useRouter } from "vue-router";
-import { NCard, NButton, NIcon } from "naive-ui";
+import { NCard, NButton, NIcon, NModal } from "naive-ui";
 import { startAuthentication } from "@simplewebauthn/browser";
 import type { PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/typescript-types";
 
 import API from "@/assets/API";
+import { loadScript } from "@/assets/utils";
 import GithubIcon from "@/icon/GithubIcon.vue";
 import PasskeyIcon from "@/icon/PasskeyIcon.vue";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
+const w = window as any;
 const router = useRouter();
+
+const showCaptchaModal = ref<boolean>(false);
+const getCaptchaToken = async (type: "WebAuth" | "Github"): Promise<string> => {
+  if (typeof w.turnstile !== "object")
+    await loadScript(
+      "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
+    );
+  showCaptchaModal.value = true;
+  await nextTick();
+  return new Promise((reject, resolve) => {
+    w.turnstile.render("#cf-captcha", {
+      sitekey: "0x4AAAAAAAIgaVBcRonnVMw0",
+      action: type,
+      theme: "dark",
+      callback: (token: string) => {
+        showCaptchaModal.value = false;
+        reject(token);
+      },
+      "error-callback": (e: any) => {
+        console.error(e);
+        NaiveUIDiscreteAPI.notification.error({
+          title: "人机校验失败",
+          content: e,
+        });
+        showCaptchaModal.value = false;
+        resolve();
+      },
+    });
+  });
+};
 
 const loginWithWebAuth = async () => {
   const optionsResp = await API<PublicKeyCredentialRequestOptionsJSON>(
@@ -62,8 +104,11 @@ const loginWithWebAuth = async () => {
   });
   if (!browserResponse) return;
 
+  const captchaToken = await getCaptchaToken("WebAuth");
+
   const verificationResp = await API("Access登陆", "/api/access/login/verification", "POST", {
     body: {
+      captchaToken,
       userName: "qiaoshouzi",
       rpID: location.hostname,
       expectedChallenge: optionsResp.data.challenge,

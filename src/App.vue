@@ -174,11 +174,12 @@ router.afterEach((to) => {
 }
 
 .footer {
-  height: calc(3.6rem - 1px);
+  height: calc(calc(3.6rem - 1px) + 20px);
   user-select: none;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-bottom: 20px;
 }
 </style>

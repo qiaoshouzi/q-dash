@@ -4,7 +4,7 @@
   "start_url": "/",
   "theme_color": "#18181c",
   "background_color": "#18181c",
-  "display": "minimal-ui",
+  "display": "standalone",
   "icons": [
     {
       "src": "/image/boom_512.png",

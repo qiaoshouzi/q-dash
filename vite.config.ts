@@ -19,7 +19,7 @@ export default defineConfig(({ command }) => {
       },
     },
     server: {
-      port: 6892,
+      port: 38920,
       strictPort: true,
       host: "0.0.0.0",
       https:

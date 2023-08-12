@@ -208,6 +208,7 @@ const emit = defineEmits<{
 const editMode = ref<boolean>(false); // 编辑模式
 const selectEditIndex = ref<number>(-1); // 编辑模式下选择数据的index
 
+// eslint-disable-next-line vue/no-setup-props-destructure
 const todoData = ref<TodoData>(JSON.parse(JSON.stringify(props.data)));
 watch(props, (props) => {
   todoData.value = JSON.parse(JSON.stringify(props.data));

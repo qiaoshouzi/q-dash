@@ -46,6 +46,7 @@ import { h, ref } from "vue";
 import { RouterLink } from "vue-router";
 import {
   NMenu,
+  NButton,
   NLayout,
   NBackTop,
   NLayoutFooter,
@@ -58,6 +59,7 @@ import { zhCN, dateZhCN, darkTheme, NGlobalStyle, NConfigProvider } from "naive-
 import router from "@/router";
 import API from "@/assets/API";
 import { useCounterStore } from "@/stores/counter";
+import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
 const counter = useCounterStore();
 
@@ -110,6 +112,45 @@ window.addEventListener("resize", () => {
   resizeEvent();
 });
 resizeEvent();
+
+// PWA 更新
+const detectSWUpdate = async () => {
+  const registration = await navigator.serviceWorker.ready;
+
+  registration.addEventListener("updatefound", () => {
+    const newSW = registration.installing;
+    newSW?.addEventListener("statechange", () => {
+      if (newSW.state == "activated") {
+        // 准备好更新
+        NaiveUIDiscreteAPI.notification.info({
+          title: "有新的更新",
+          content: () => {
+            return h(
+              "div",
+              {
+                style: {
+                  display: "flex",
+                  "justify-content": "flex-end",
+                },
+              },
+              h(
+                NButton,
+                {
+                  type: "success",
+                  onClick: () => location.reload(),
+                },
+                {
+                  default: () => "刷新",
+                }
+              )
+            );
+          },
+        });
+      }
+    });
+  });
+};
+detectSWUpdate();
 
 // getConfig
 let isInit: boolean = false;

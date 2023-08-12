@@ -219,12 +219,12 @@ body {
 }
 
 .footer {
-  height: calc(calc(3.6rem - 1px) + 20px);
+  height: calc(calc(3.6rem - 1px) + 5px);
   user-select: none;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-bottom: 20px;
+  padding-bottom: 5px;
 }
 </style>

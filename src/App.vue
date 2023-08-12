@@ -6,7 +6,9 @@
         class="navigation"
         :style="{ 'justify-content': counter.pageSize === 'pc' ? 'space-between' : 'center' }"
       >
-        <span class="siteName" @click="() => router.push('/')">Qiao's Dash</span>
+        <n-h1 class="siteName">
+          <a style="color: #ffffffe6" href="/">Qiao's Dash</a>
+        </n-h1>
         <n-menu
           v-if="counter.pageSize === 'pc'"
           mode="horizontal"
@@ -192,6 +194,10 @@ router.afterEach((to) => {
 </script>
 
 <style>
+a {
+  text-decoration: none;
+}
+
 body {
   overscroll-behavior-y: contain;
 }
@@ -202,6 +208,8 @@ body {
   letter-spacing: 2px;
   white-space: nowrap;
   cursor: default;
+
+  margin-bottom: 0;
 }
 
 .navigation {

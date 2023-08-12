@@ -151,6 +151,10 @@ router.afterEach((to) => {
 </script>
 
 <style>
+body {
+  overscroll-behavior-y: contain;
+}
+
 .siteName {
   font-weight: bold;
   font-size: 18px;

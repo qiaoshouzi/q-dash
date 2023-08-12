@@ -158,7 +158,7 @@
         :value="name"
         @update:value="(v) => (todoData.list[index][0] = v)"
         :edit="editMode"
-        @click="() => (todoData.list[index][1] = !todoData.list[index][1])"
+        @click="checkboxValueUpdate(!todoData.list[index][1], index)"
       />
     </div>
     <n-empty v-if="todoData.list.length === 0" description="无任务" />

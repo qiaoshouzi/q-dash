@@ -46,7 +46,7 @@
         }"
       >
         <!-- 登录管理 -->
-        <LoginCard />
+        <BiliBiliLoginCard />
       </div>
       <div
         :style="{
@@ -106,10 +106,10 @@ import { NCard, NResult, NButton, NEmpty } from "naive-ui";
 import { useUrlSearchParams } from "@vueuse/core";
 
 import API from "@/assets/API";
-import LoginCard from "@/components/LoginCard.vue";
 import { useCounterStore } from "@/stores/counter";
 import PaginationCard from "@/components/PaginationCard.vue";
 import DynamicCard from "@/components/Dynamic/DynamicCard.vue";
+import BiliBiliLoginCard from "@/components/BiliBiliLoginCard.vue";
 import BatchDeleteModal from "@/components/Dynamic/BatchDeleteModal.vue";
 
 const counter = useCounterStore();

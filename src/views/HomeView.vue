@@ -18,7 +18,7 @@
           </n-button>
         </n-gi>
         <n-gi>
-          <LoginCard style="flex: 1" />
+          <BiliBiliLoginCard style="flex: 1" />
         </n-gi>
       </n-grid>
     </n-card>
@@ -48,8 +48,8 @@
 import { NH2, NCard, NButton, NGrid, NGi } from "naive-ui";
 
 import { useCounterStore } from "@/stores/counter";
-import LoginCard from "@/components/LoginCard.vue";
 import ManageAccessCard from "@/components/ManageAccessCard.vue";
+import BiliBiliLoginCard from "@/components/BiliBiliLoginCard.vue";
 
 const counter = useCounterStore();
 

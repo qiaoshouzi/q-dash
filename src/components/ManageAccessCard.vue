@@ -5,7 +5,7 @@
         注册
       </n-button>
     </template>
-    <n-data-table :columns="tableColumns" :data="tableData" :bordered="false" />
+    <n-data-table :columns="tableColumns" :data="counter.passkeyData" :bordered="false" />
   </n-card>
   <n-modal
     :show="tableSelectData !== undefined"
@@ -38,18 +38,17 @@ import { NCard, NInput, NButton, NDataTable, NModal, type DataTableColumns } fro
 import type { PublicKeyCredentialCreationOptionsJSON } from "@simplewebauthn/typescript-types";
 
 import API from "@/assets/API";
+import type { PasskeyData } from "@/types/access";
+import { useCounterStore } from "@/stores/counter";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
+
+const counter = useCounterStore();
 
 const tableSelectData = ref<
   PasskeyData & {
     edit: (name: string) => void;
   }
 >();
-type PasskeyData = {
-  id: string;
-  name: string;
-  rpID: string;
-};
 const tableColumns: DataTableColumns<PasskeyData> = [
   {
     title: "Name",
@@ -114,7 +113,7 @@ const tableColumns: DataTableColumns<PasskeyData> = [
                     );
                     if (!resp_json) return;
 
-                    tableData.value = tableData.value.filter((v) => !(v.id === row.id));
+                    counter.passkeyData = counter.passkeyData.filter((v) => !(v.id === row.id));
                   },
                 });
               },
@@ -126,19 +125,6 @@ const tableColumns: DataTableColumns<PasskeyData> = [
     },
   },
 ];
-const tableData = ref<PasskeyData[]>([]);
-const initTableData = async () => {
-  const resp_json = await API<
-    {
-      name: string;
-      id: string;
-      rpID: string;
-    }[]
-  >("获取Access", "/api/access/authenticator", "GET");
-  if (!resp_json) return;
-  tableData.value = resp_json.data;
-};
-initTableData();
 
 const saveEditButtonClick = async () => {
   if (tableSelectData.value === undefined) return;
@@ -198,7 +184,7 @@ const accessRegistration = async () => {
     },
   });
   if (verificationResp) {
-    tableData.value.push(verificationResp.data);
+    counter.passkeyData.push(verificationResp.data);
   }
 };
 </script>

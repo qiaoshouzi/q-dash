@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 
+import type { PasskeyData } from "@/types/access";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
 interface State {
@@ -9,6 +10,7 @@ interface State {
   latestUpdateBiliBiliLoginTS: number | undefined;
   latestUpdateWeiboLoginTS: number | undefined;
   apiToken: string;
+  passkeyData: PasskeyData[];
 }
 
 export const useCounterStore = defineStore("counter", {
@@ -19,6 +21,7 @@ export const useCounterStore = defineStore("counter", {
     latestUpdateBiliBiliLoginTS: undefined,
     latestUpdateWeiboLoginTS: undefined,
     apiToken: "",
+    passkeyData: [],
   }),
   actions: {
     updateCatchDynamicStatus() {

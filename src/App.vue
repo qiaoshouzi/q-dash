@@ -60,6 +60,7 @@ import { zhCN, dateZhCN, darkTheme, NGlobalStyle, NConfigProvider } from "naive-
 
 import router from "@/router";
 import API from "@/assets/API";
+import type { PasskeyData } from "@/types/access";
 import { useCounterStore } from "@/stores/counter";
 import NaiveUIDiscreteAPI from "@/assets/NaiveUIDiscreteAPI";
 
@@ -188,10 +189,18 @@ const initConfig = async () => {
   isInit = true;
   showContent.value = true;
 };
-router.afterEach((to) => {
+// getPasskeyData
+const initPasskeyData = async () => {
+  const resp_json = await API<PasskeyData[]>("获取Access", "/api/access/authenticator", "GET");
+  if (!resp_json) return;
+  counter.passkeyData = resp_json.data;
+};
+router.afterEach(async (to) => {
   showContent.value = isInit;
   if (to.name !== "Login" && !isInit) {
-    initConfig();
+    initConfig().then(() => {
+      initPasskeyData();
+    });
   } else {
     showContent.value = true;
   }

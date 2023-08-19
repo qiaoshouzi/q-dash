@@ -136,11 +136,11 @@ const loginWithWebAuth = async () => {
   });
   if (!browserResponse) return;
 
-  const captchaToken = await getCaptchaToken("WebAuth");
+  // const captchaToken = await getCaptchaToken("WebAuth");
 
   const verificationResp = await API("Access登陆", "/api/access/login/verification", "POST", {
     body: {
-      captchaToken,
+      // captchaToken,
       userName: "qiaoshouzi",
       rpID: location.hostname,
       expectedChallenge: optionsResp.data.challenge,

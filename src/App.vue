@@ -181,10 +181,6 @@ const initConfig = async () => {
     const t = JSON.parse(resp_json.data["bilibili-login"]);
     return t.ts;
   })();
-  counter.latestUpdateWeiboLoginTS = (() => {
-    const t = JSON.parse(resp_json.data["weibo-login"]);
-    return t.ts;
-  })();
   counter.apiToken = resp_json.data["api-token"];
   isInit = true;
   showContent.value = true;

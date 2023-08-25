@@ -22,14 +22,6 @@
         </n-gi>
       </n-grid>
     </n-card>
-    <n-card title="LoginInfo" size="small" style="margin-top: 10px">
-      <n-grid :cols="counter.pageSize === 'pc' ? 2 : 1" x-gap="5px" y-gap="5px">
-        <n-gi>
-          <WeiboLoginCard />
-        </n-gi>
-        <n-gi v-if="counter.pageSize === 'pc'"></n-gi>
-      </n-grid>
-    </n-card>
     <n-card title="Route" size="small" style="margin-top: 10px">
       <div style="display: flex; flex-wrap: wrap; gap: 5px">
         <n-button
@@ -56,7 +48,6 @@
 import { NH2, NCard, NButton, NGrid, NGi } from "naive-ui";
 
 import { useCounterStore } from "@/stores/counter";
-import WeiboLoginCard from "@/components/WeiboLoginCard.vue";
 import ManageAccessCard from "@/components/ManageAccessCard.vue";
 import BiliBiliLoginCard from "@/components/BiliBiliLoginCard.vue";
 

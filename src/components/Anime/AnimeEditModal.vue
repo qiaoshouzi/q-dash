@@ -138,6 +138,10 @@ const statusOptions = [
     label: "想看",
     value: "want",
   },
+  {
+    label: "完结",
+    value: "end",
+  },
 ];
 const updateTimeOptions = [
   {
@@ -182,7 +186,7 @@ const animeData = ref<AnimeData>(
       time: null,
     },
     ep: 12,
-  }
+  },
 );
 watch(props, (value) => {
   if (value.data === undefined)
@@ -240,7 +244,7 @@ const updateDataButtonClick = async () => {
       startTime: animeData.value.startTime,
       updateTime: animeData.value.updateTime,
       ep: animeData.value.ep,
-    })
+    }),
   );
 
   const resp_json = await API("更新Anime", "/api/anime", "POST", {

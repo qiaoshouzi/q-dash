@@ -98,7 +98,7 @@ watch(props, (value) => (animeData.value = value.data));
 const typeData: {
   [key: string]: {
     text: string;
-    tagType: "info" | "success" | "warning";
+    tagType: "info" | "success" | "warning" | "error";
   };
 } = {
   follow: {
@@ -112,6 +112,10 @@ const typeData: {
   want: {
     text: "想看",
     tagType: "info",
+  },
+  end: {
+    text: "完结",
+    tagType: "error",
   },
 };
 </script>

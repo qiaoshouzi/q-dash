@@ -144,6 +144,10 @@ const radioButtonOptions = [
     label: "想看",
     key: "want",
   },
+  {
+    label: "完结",
+    key: "end",
+  },
 ];
 const radioButtonValue = ref<string>("follow");
 watch(radioButtonValue, () => (selectDay.value = today));

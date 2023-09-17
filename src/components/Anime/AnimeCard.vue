@@ -27,9 +27,9 @@
             <n-text
               v-if="animeData.updateTime.week !== null || animeData.updateTime.time !== null"
               :type="
-                animeData.updateTime.week === today
+                animeData.updateTime.week === today && animeData.type === 'follow'
                   ? 'success'
-                  : animeData.updateTime.week === props.selectDay
+                  : animeData.updateTime.week === props.selectDay && animeData.type === 'follow'
                   ? 'warning'
                   : 'default'
               "

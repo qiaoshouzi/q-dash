@@ -122,7 +122,7 @@ const animeDataType = computed(() => {
         ...value,
       };
     })
-    .filter((value) => radioButtonValue.value === "all" || value.type === radioButtonValue.value)
+    .filter((value) => value.type === radioButtonValue.value)
     .sort((a, b) => {
       if (a.updateTime.week === selectDay.value || b.updateTime.week === null) return -1;
       else if (b.updateTime.week === selectDay.value || a.updateTime.week === null) return 1;
@@ -132,10 +132,6 @@ const animeDataType = computed(() => {
 
 // RadioButton
 const radioButtonOptions = [
-  {
-    label: "全部",
-    key: "all",
-  },
   {
     label: "追番",
     key: "follow",
@@ -149,7 +145,7 @@ const radioButtonOptions = [
     key: "want",
   },
 ];
-const radioButtonValue = ref<string>("all");
+const radioButtonValue = ref<string>("follow");
 watch(radioButtonValue, () => (selectDay.value = today));
 
 // Anime Edit Data
